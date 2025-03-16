@@ -11,7 +11,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		A2A834A52D866804003465DF /* BinaryTree */ = {
+		A2A834CA2D866EAF003465DF /* BinaryTree */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = BinaryTree;
 			sourceTree = "<group>";
@@ -32,8 +32,8 @@
 		A2A8349A2D866804003465DF = {
 			isa = PBXGroup;
 			children = (
-				A2A834A52D866804003465DF /* BinaryTree */,
 				A2A834A42D866804003465DF /* Products */,
+				A2A834CA2D866EAF003465DF /* BinaryTree */,
 			);
 			sourceTree = "<group>";
 		};
@@ -61,7 +61,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				A2A834A52D866804003465DF /* BinaryTree */,
+				A2A834CA2D866EAF003465DF /* BinaryTree */,
 			);
 			name = BinaryTree;
 			packageProductDependencies = (
