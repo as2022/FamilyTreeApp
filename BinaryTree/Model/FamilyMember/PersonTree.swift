@@ -1,47 +1,31 @@
 //
-//  PersonTree.swift
-//  BinaryTree
-//
-//  Created by Alex Smithson on 3/15/25.
-//
-
-
-//
 //  String Tree.swift
 //  BinaryTree
 //
 //  Created by Alex Smithson on 3/15/25.
 //
 
-let PersonTree = Tree<FamilyMember>("Ralph Smith", children: [
-    Tree("Terri Smith", children: [
-        Tree("Kirsten Smithson"),
-        Tree("Drew Smithson"),
-        Tree("Alex Smithson")
-    ]),
-    Tree("Lyle Smith", children: [
-        Tree("Reese Smith"),
-        Tree("Avery Smith")
-    ])
-])
+import Foundation
 
-let uniqueStringTree = stringTree.map(Unique.init)
+let mainPerson = FamilyMember(firstName: "Ralph", lastName: "Smith", birthDate: Date(), birthPlace: "Iowa")
+let personTree = Tree<FamilyMember>(mainPerson, children: [])
+let uniquePersonTree = personTree.map(Unique.init)
 
-extension Tree where A == Unique<String> {
-    mutating func insert(_ string: String) {
-        if string.hashValue < value.value.hashValue {
+extension Tree where A == Unique<FamilyMember> {
+    mutating func insert(_ person: FamilyMember) {
+        if person.hashValue < value.value.hashValue {
             if children.count > 0 {
-                children[0].insert(string)
+                children[0].insert(person)
             } else {
-                children.append(Tree(Unique(string)))
+                children.append(Tree(Unique(person)))
             }
         } else {
             if children.count == 2 {
-                children[1].insert(string)
-            } else if children.count == 1 && children[0].value.value.hashValue > string.hashValue {
-                children[0].insert(string)
+                children[1].insert(person)
+            } else if children.count == 1 && children[0].value.value.hashValue > person.hashValue {
+                children[0].insert(person)
             } else {
-                children.append(Tree(Unique(string)))
+                children.append(Tree(Unique(person)))
             }
         }
     }

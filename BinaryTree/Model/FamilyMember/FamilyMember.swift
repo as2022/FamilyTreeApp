@@ -23,7 +23,7 @@ class FamilyMember: Identifiable {
     @Relationship var father: FamilyMember?
     @Relationship var mother: FamilyMember?
     @Relationship var siblings: [FamilyMember]
-    @Relationship var spouses: [FamilyMember]
+    @Relationship var spouse: FamilyMember?
     @Relationship var children: [FamilyMember]
     
     init(firstName: String, middleName: String? = nil, lastName: String, birthDate: Date, birthPlace: String) {
@@ -34,7 +34,6 @@ class FamilyMember: Identifiable {
         self.birthDate = birthDate
         self.birthPlace = birthPlace
         self.siblings = []
-        self.spouses = []
         self.children = []
     }
 }

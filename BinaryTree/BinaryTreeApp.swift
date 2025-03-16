@@ -13,7 +13,6 @@ struct BinaryTreeApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .modelContainer(for: FamilyMember.self)
         }
     }
 }

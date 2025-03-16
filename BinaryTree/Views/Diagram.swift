@@ -12,7 +12,7 @@ import SwiftUI
 struct Diagram<A: Identifiable, V: View>: View {
     let tree: Tree<A>
     let node: (A) -> V
-    
+
     typealias Key = CollectDict<A.ID, Anchor<CGPoint>>
 
     var body: some View {
