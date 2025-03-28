@@ -8,35 +8,40 @@
 import SwiftUI
 
 struct FamilyMemberView: View {
+    @Environment(\.modelContext) private var modelContext
     var member: FamilyMember
     @State private var isDetailPresented = false
-    
+    let onChildAdd: () -> Void
+
     var body: some View {
         VStack {
-            Button(action: {
-                isDetailPresented = true
-            }) {
-                VStack {
-                    Text("\(member.firstName) \(member.lastName)")
-                        .font(.headline)
-                    Text("Born: \(formattedDate(member.birthDate))")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
+            HStack {
+                Button(action: {
+                    isDetailPresented = true
+                }) {
+                    VStack {
+                        Text("\(member.firstName) \(member.lastName)")
+                            .font(.headline)
+                        Text("Born: \(formattedDate(member.birthDate))")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                    }
+                    .padding()
+                    .background(Color.blue.opacity(0.2))
+                    .cornerRadius(8)
                 }
-                .padding()
-                .background(Color.blue.opacity(0.2))
-                .cornerRadius(8)
-            }
-            .sheet(isPresented: $isDetailPresented) {
-                NavigationStack {
-                    FamilyMemberDetailView(member: member)
+                Button(action: {
+                    let newChild = FamilyMember(firstName: "", lastName: member.lastName, birthDate: Date(), birthPlace: "")
+                    modelContext.insert(newChild)
+                    member.children.append(newChild)
+                    onChildAdd()
+                }) {
+                    Image(systemName: "person.crop.circle.badge.plus")
                 }
-            }
-            
-            if !member.children.isEmpty {
-                HStack {
-                    ForEach(member.children) { child in
-                        FamilyMemberView(member: child)
+                .padding(.leading, 4)
+                .sheet(isPresented: $isDetailPresented) {
+                    NavigationStack {
+                        FamilyMemberDetailView(member: member)
                     }
                 }
             }

@@ -10,10 +10,23 @@ import SwiftUI
 
 struct ContentView: View {
 
+    @Environment(\.modelContext) private var modelContext
+
     var body: some View {
-        ScrollView {
-            ScrollView(.horizontal) {
-                BinaryTreeView()
+        NavigationStack {
+            ScrollView([.vertical, .horizontal]) {
+                FamilyTreeView()
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Save") {
+                        do {
+                            try modelContext.save()
+                        } catch {
+                            print("Failed to save context: \(error)")
+                        }
+                    }
+                }
             }
         }
     }

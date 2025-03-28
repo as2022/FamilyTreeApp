@@ -10,19 +10,19 @@ import SwiftUI
 
 /// A simple Diagram. It's not very performant yet, but works great for smallish trees.
 struct Diagram<A: Identifiable, V: View>: View {
-    let tree: Tree<A>
-    let node: (A) -> V
+    @Binding var tree: Tree<A>
+    var node: (Binding<Tree<A>>) -> V
 
     typealias Key = CollectDict<A.ID, Anchor<CGPoint>>
 
     var body: some View {
-        VStack(alignment: .center) {
-            node(tree.value)
+        VStack(alignment: .center, spacing: 20) {
+            node($tree)
                .anchorPreference(key: Key.self, value: .center, transform: {
                    [self.tree.value.id: $0]
                })
-            HStack(alignment: .bottom, spacing: 10) {
-                ForEach(tree.children, id: \.value.id, content: { child in
+            HStack(alignment: .top, spacing: 20) {
+                ForEach($tree.children, id: \.value.id, content: { child in
                     Diagram(tree: child, node: self.node)
                 })
             }

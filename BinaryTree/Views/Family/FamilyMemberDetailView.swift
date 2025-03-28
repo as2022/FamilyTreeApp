@@ -12,6 +12,7 @@ struct FamilyMemberDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var allMembers: [FamilyMember]
 
+    @FocusState private var isFocused: Bool
     @Bindable var member: FamilyMember
     var enableRelationships: Bool = true
 
@@ -19,6 +20,12 @@ struct FamilyMemberDetailView: View {
         Form {
             Section(header: Text("Personal Information")) {
                 TextField("First Name", text: $member.firstName)
+                    .focused($isFocused)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                isFocused = member.firstName.isEmpty
+                            }
+                        }
                 TextField("Middle Name", text: Binding(get: { member.middleName ?? "" }, set: { member.middleName = $0.isEmpty ? nil : $0 }))
                 TextField("Last Name", text: $member.lastName)
                 TextField("Birthplace", text: $member.birthPlace)

@@ -7,10 +7,6 @@
 
 import Foundation
 
-let mainPerson = FamilyMember(firstName: "Ralph", lastName: "Smith", birthDate: Date(), birthPlace: "Iowa")
-let personTree = Tree<FamilyMember>(mainPerson, children: [])
-let uniquePersonTree = personTree.map(Unique.init)
-
 extension Tree where A == Unique<FamilyMember> {
     mutating func insert(_ person: FamilyMember) {
         if person.hashValue < value.value.hashValue {
@@ -28,5 +24,9 @@ extension Tree where A == Unique<FamilyMember> {
                 children.append(Tree(Unique(person)))
             }
         }
+    }
+
+    mutating func add(child: FamilyMember) {
+        children.append(Tree(Unique(child)))
     }
 }
