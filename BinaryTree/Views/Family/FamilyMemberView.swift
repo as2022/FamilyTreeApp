@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct FamilyMemberView: View {
-    @Environment(\.modelContext) private var modelContext
+
     var member: FamilyMember
     @State private var isDetailPresented = false
-    let onChildAdd: () -> Void
+    let onChildAdd: (FamilyMember) -> Void
+    let onSpouseAdd: (FamilyMember) -> Void
 
     var body: some View {
         VStack {
@@ -20,34 +21,59 @@ struct FamilyMemberView: View {
                     isDetailPresented = true
                 }) {
                     VStack {
-                        Text("\(member.firstName) \(member.lastName)")
+                        Text(member.fullName)
                             .font(.headline)
                         Text("Born: \(formattedDate(member.birthDate))")
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     }
                     .padding()
-                    .background(Color.blue.opacity(0.2))
-                    .cornerRadius(8)
+                    .background(backgroundColor)
+                    .cornerRadius(16)
                 }
-                Button(action: {
-                    let newChild = FamilyMember(firstName: "", lastName: member.lastName, birthDate: Date(), birthPlace: "")
-                    modelContext.insert(newChild)
-                    member.children.append(newChild)
-                    onChildAdd()
-                }) {
-                    Image(systemName: "person.crop.circle.badge.plus")
-                }
-                .padding(.leading, 4)
                 .sheet(isPresented: $isDetailPresented) {
                     NavigationStack {
                         FamilyMemberDetailView(member: member)
                     }
                 }
             }
+
+            if !member.isMarriedIntoFamily {
+                HStack(spacing: 4) {
+                    Button(action: {
+                        let newChild = FamilyMember(lastName: lastNameForChild)
+                        member.children.append(newChild)
+                        onChildAdd(newChild)
+                    }) {
+                        Label("Child", systemImage: "person.fill.badge.plus")
+                    }
+                    Button(action: {
+                        let newSpouse = FamilyMember(sex: member.sex?.opposite ?? nil, isMarriedIntoFamily: true)
+                        member.spouse = newSpouse
+                        onSpouseAdd(newSpouse)
+                    }) {
+                        Label("Spouse", systemImage: "heart.circle")
+                    }
+                }
+                .padding(.top, 4)
+            }
         }
     }
-    
+
+    private var lastNameForChild: String {
+        if member.sex == .male {
+            member.lastName
+        } else if let spouse = member.spouse, spouse.sex == .male {
+            spouse.lastName
+        } else {
+            ""
+        }
+    }
+
+    private var backgroundColor: Color {
+        member.sex == .male ? CustomColor.softBlue :  member.sex == .female ? CustomColor.softPink : CustomColor.lightGray
+    }
+
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium

@@ -12,24 +12,23 @@ struct FamilyTreeView: View {
 
     @Environment(\.modelContext) private var modelContext
     @Query private var allMembers: [FamilyMember]
-    @State private var tree: Tree<Unique<FamilyMember>> = Tree(Unique(FamilyMember(firstName: "", lastName: "", birthDate: Date(), birthPlace: "")), children: [])
+    @State private var tree: Tree<Unique<FamilyMember>> = Tree(Unique(FamilyMember(firstName: "Ralph", lastName: "Smith", sex: .male ,birthDate: Date(), birthPlace: "Iowa")), children: [])
 
     var body: some View {
-        VStack {
-            Text("Family Tree")
-                .font(.headline)
-            Button("Reload") {
-                if let firstMember = allMembers.first {
-                    tree = Tree(Unique(firstMember))
-                }
+        if allMembers.isEmpty {
+            VStack {
+                Text("Welcome to the Family Tree App!")
+                    .font(.headline)
+                Text("Click the 'Add' button to start building your family tree.")
+                    .font(.caption)
             }
-            Spacer()
-            Diagram(tree: $tree, node: { subTree in
-                FamilyMemberView(member: subTree.wrappedValue.value.value) {
-                    subTree.wrappedValue.add(child: FamilyMember(firstName: "", lastName: "", birthDate: Date(), birthPlace: ""))
-                    modelContext.insert(subTree.wrappedValue.value.value)
-                }
-            })
         }
+        Diagram(tree: $tree, node: { node in
+            FamilyMemberView(member: node.wrappedValue.value.value, onChildAdd: { newChild in
+                node.wrappedValue.insert(child: newChild, for: node.wrappedValue.value.value)
+            }, onSpouseAdd: { newSpouse in
+                node.wrappedValue.insert(spouse: newSpouse, for: node.wrappedValue.value.value)
+            })
+        })
     }
 }

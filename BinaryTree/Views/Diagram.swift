@@ -16,11 +16,19 @@ struct Diagram<A: Identifiable, V: View>: View {
     typealias Key = CollectDict<A.ID, Anchor<CGPoint>>
 
     var body: some View {
-        VStack(alignment: .center, spacing: 20) {
-            node($tree)
-               .anchorPreference(key: Key.self, value: .center, transform: {
-                   [self.tree.value.id: $0]
-               })
+        VStack(alignment: .center) {
+            HStack(spacing: 20) {
+                node($tree)
+                    .anchorPreference(key: Key.self, value: .center, transform: {
+                        [self.tree.value.id: $0]
+                    })
+                if let spouse = tree.spouse {
+                    Diagram(
+                        tree: Binding(get: { Tree<A>(spouse, children: []) }, set: { tree.spouse = $0.value }) ,
+                        node: self.node
+                    )
+                }
+            }
             HStack(alignment: .top, spacing: 20) {
                 ForEach($tree.children, id: \.value.id, content: { child in
                     Diagram(tree: child, node: self.node)
@@ -33,8 +41,16 @@ struct Diagram<A: Identifiable, V: View>: View {
                     Line(
                         from: proxy[centers[self.tree.value.id]!],
                         to: proxy[centers[child.value.id]!])
-                    .stroke()
+                    .stroke(style: StrokeStyle.init(lineWidth: 10, lineCap: .round))
+                    .foregroundStyle(Color.brown.opacity(0.6))
                 })
+                if let spouse = tree.spouse {
+                    Line(
+                        from: proxy[centers[self.tree.value.id]!],
+                        to: proxy[centers[spouse.id]!])
+                    .stroke(style: StrokeStyle.init(lineWidth: 10, lineCap: .round))
+                    .foregroundStyle(Color.brown.opacity(0.6))
+                }
             }
         })
     }

@@ -17,8 +17,10 @@ class FamilyMember: Identifiable {
     var firstName: String
     var middleName: String?
     var lastName: String
+    var sex: Sex?
     var birthDate: Date
     var birthPlace: String
+    var isMarriedIntoFamily: Bool
 
     @Relationship var father: FamilyMember?
     @Relationship var mother: FamilyMember?
@@ -26,14 +28,38 @@ class FamilyMember: Identifiable {
     @Relationship var spouse: FamilyMember?
     @Relationship var children: [FamilyMember]
     
-    init(firstName: String, middleName: String? = nil, lastName: String, birthDate: Date, birthPlace: String) {
+    init(firstName: String = "",
+         middleName: String? = nil,
+         lastName: String = "",
+         sex: Sex? = nil,
+         birthDate: Date = Date(),
+         birthPlace: String = "",
+         isMarriedIntoFamily: Bool = false
+    ) {
         self.id = UUID()
         self.firstName = firstName
         self.middleName = middleName
         self.lastName = lastName
+        self.sex = sex
         self.birthDate = birthDate
         self.birthPlace = birthPlace
+        self.isMarriedIntoFamily = isMarriedIntoFamily
         self.siblings = []
         self.children = []
+    }
+}
+
+enum Sex: String, CaseIterable, Identifiable, Codable {
+
+    case male
+    case female
+
+    var id: String { self.rawValue }
+
+    var opposite: Sex {
+        switch self {
+        case .male: return .female
+        case .female: return .male
+        }
     }
 }

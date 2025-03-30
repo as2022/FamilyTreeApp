@@ -10,10 +10,12 @@ import SwiftUICore
 /// A simple Tree datastructure that holds nodes with `A` as the value.
 struct Tree<A> {
     var value: A
+    var spouse: A?
     var children: [Tree<A>] = []
-    init(_ value: A, children: [Tree<A>] = []) {
+    init(_ value: A, children: [Tree<A>] = [], spouse: A? = nil) {
         self.value = value
         self.children = children
+        self.spouse = spouse
     }
 }
 

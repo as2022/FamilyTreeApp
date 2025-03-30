@@ -28,10 +28,15 @@ struct FamilyMemberDetailView: View {
                         }
                 TextField("Middle Name", text: Binding(get: { member.middleName ?? "" }, set: { member.middleName = $0.isEmpty ? nil : $0 }))
                 TextField("Last Name", text: $member.lastName)
+                Picker("Sex", selection: $member.sex) {
+                    ForEach(Sex.allCases) { sex in
+                        Text(sex.rawValue).tag(sex)
+                    }
+                }
+                .pickerStyle(.segmented)
                 TextField("Birthplace", text: $member.birthPlace)
                 DatePicker("Birthdate", selection: $member.birthDate, displayedComponents: .date)
             }
-            
             if enableRelationships {
                 Section(header: Text("Family")) {
                     RelationshipPicker(
