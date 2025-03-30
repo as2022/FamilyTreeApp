@@ -9,10 +9,9 @@ import SwiftUI
 
 struct FamilyMemberView: View {
 
-    var member: FamilyMember
+    @Bindable var member: FamilyMember
     @State private var isDetailPresented = false
-    let onChildAdd: (FamilyMember) -> Void
-    let onSpouseAdd: (FamilyMember) -> Void
+    let onDelete: (FamilyMember) -> Void
 
     var body: some View {
         VStack {
@@ -43,16 +42,19 @@ struct FamilyMemberView: View {
                     Button(action: {
                         let newChild = FamilyMember(lastName: lastNameForChild)
                         member.children.append(newChild)
-                        onChildAdd(newChild)
                     }) {
                         Label("Child", systemImage: "person.fill.badge.plus")
                     }
                     Button(action: {
                         let newSpouse = FamilyMember(sex: member.sex?.opposite ?? nil, isMarriedIntoFamily: true)
                         member.spouse = newSpouse
-                        onSpouseAdd(newSpouse)
                     }) {
                         Label("Spouse", systemImage: "heart.circle")
+                    }
+                    Button(role: .destructive) {
+                        onDelete(member)
+                    } label: {
+                        Image(systemName: "trash")
                     }
                 }
                 .padding(.top, 4)

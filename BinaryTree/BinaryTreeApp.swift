@@ -14,5 +14,6 @@ struct BinaryTreeApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: FamilyMember.self)
     }
 }

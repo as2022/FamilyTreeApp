@@ -14,9 +14,7 @@ struct ContentView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView([.vertical, .horizontal]) {
-                FamilyTreeView()
-            }
+            FamilyTreeView()
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
