@@ -8,9 +8,9 @@
 
 import SwiftUI
 
-/// A simple Diagram. It's not very performant yet, but works great for smallish trees.
+/// A simple Diagram. It's not very performant yet, but works great for smallish roots.
 struct Diagram<V: View>: View {
-    @Binding var tree: FamilyMember
+    @Binding var root: FamilyMember
     var node: (Binding<FamilyMember>) -> V
 
     typealias Key = CollectDict<FamilyMember.ID, Anchor<CGPoint>>
@@ -18,35 +18,35 @@ struct Diagram<V: View>: View {
     var body: some View {
         VStack(alignment: .center) {
             HStack(spacing: 20) {
-                node($tree)
+                node($root)
                     .anchorPreference(key: Key.self, value: .center, transform: {
-                        [self.tree.id: $0]
+                        [self.root.id: $0]
                     })
-                if let spouse = tree.spouse {
+                if let spouse = root.spouse {
                     Diagram(
-                        tree: Binding(get: { spouse }, set: { tree.spouse = $0 }) ,
+                        root: Binding(get: { spouse }, set: { root.spouse = $0 }) ,
                         node: self.node
                     )
                 }
             }
             HStack(alignment: .top, spacing: 20) {
-                ForEach($tree.children, id: \.id, content: { child in
-                    Diagram(tree: child, node: self.node)
-                })
+                ForEach($root.children.sorted(by: { $0.wrappedValue.birthDate < $1.wrappedValue.birthDate }), id: \.id) { child in
+                    Diagram(root: child, node: self.node)
+                }
             }
         }.backgroundPreferenceValue(Key.self, { (centers: [FamilyMember.ID: Anchor<CGPoint>]) in
             GeometryReader { proxy in
-                ForEach(self.tree.children, id: \.id, content: {
+                ForEach(self.root.children, id: \.id, content: {
                  child in
                     Line(
-                        from: proxy[centers[self.tree.id]!],
+                        from: proxy[centers[self.root.id]!],
                         to: proxy[centers[child.id]!])
                     .stroke(style: StrokeStyle.init(lineWidth: 10, lineCap: .round))
                     .foregroundStyle(Color.brown.opacity(0.6))
                 })
-                if let spouse = tree.spouse {
+                if let spouse = root.spouse {
                     Line(
-                        from: proxy[centers[self.tree.id]!],
+                        from: proxy[centers[self.root.id]!],
                         to: proxy[centers[spouse.id]!])
                     .stroke(style: StrokeStyle.init(lineWidth: 10, lineCap: .round))
                     .foregroundStyle(Color.brown.opacity(0.6))

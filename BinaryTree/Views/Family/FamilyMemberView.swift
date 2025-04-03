@@ -40,7 +40,13 @@ struct FamilyMemberView: View {
             if !member.isMarriedIntoFamily {
                 HStack(spacing: 4) {
                     Button(action: {
-                        let newChild = FamilyMember(lastName: lastNameForChild)
+                        let newParent = FamilyMember(lastName: lastNameForChild)
+                        member.parent = newParent
+                    }) {
+                        Label("Parent", systemImage: "person.fill.badge.plus")
+                    }
+                    Button(action: {
+                        let newChild = FamilyMember(lastName: lastNameForChild, parent: member)
                         member.children.append(newChild)
                     }) {
                         Label("Child", systemImage: "person.fill.badge.plus")

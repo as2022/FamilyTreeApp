@@ -34,26 +34,24 @@ struct RelationshipPicker: View {
                     Image(systemName: "person.fill.badge.plus")
                 })
             }
-            .sheet(isPresented: $isPresentingDetail) {
-                if let newMember = newMember {
-                    NavigationStack {
-                        FamilyMemberDetailView(member: newMember, enableRelationships: false)
-                            .toolbar {
-                                ToolbarItem(placement: .topBarLeading) {
-                                    Button("Cancel") {
-                                        isPresentingDetail = false
-                                        modelContext.delete(newMember)
-                                    }
-                                }
-                                ToolbarItem(placement: .topBarTrailing) {
-                                    Button("Save") {
-                                        selection = newMember
-                                        isPresentingDetail = false
-                                    }
+            .sheet(item: $newMember) { newMember in
+                NavigationStack {
+                    FamilyMemberDetailView(member: newMember, enableRelationships: false)
+                        .toolbar {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button("Cancel") {
+                                    isPresentingDetail = false
+                                    modelContext.delete(newMember)
                                 }
                             }
+                            ToolbarItem(placement: .topBarTrailing) {
+                                Button("Save") {
+                                    selection = newMember
+                                    isPresentingDetail = false
+                                }
+                            }
+                        }
                     }
-                }
             }
             .buttonStyle(BorderlessButtonStyle())
             .foregroundColor(.blue)

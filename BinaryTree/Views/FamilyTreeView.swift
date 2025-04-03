@@ -34,7 +34,7 @@ struct FamilyTreeView: View {
                     .font(.caption)
             }
             ScrollView([.vertical, .horizontal]) {
-                Diagram(tree: $tree, node: { node in
+                Diagram(root: $tree, node: { node in
                     FamilyMemberView(member: node.wrappedValue, onDelete: { member in
                         tree.delete(person: member)
                     })

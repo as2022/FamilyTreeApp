@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import SwiftUI
 
 @Model
 class FamilyMember: Identifiable {
@@ -22,8 +23,7 @@ class FamilyMember: Identifiable {
     var birthPlace: String
     var isMarriedIntoFamily: Bool
 
-    @Relationship var father: FamilyMember?
-    @Relationship var mother: FamilyMember?
+    @Relationship var parent: FamilyMember?
     @Relationship var siblings: [FamilyMember]
     @Relationship var spouse: FamilyMember?
     @Relationship var children: [FamilyMember]
@@ -34,6 +34,7 @@ class FamilyMember: Identifiable {
          sex: Sex? = nil,
          birthDate: Date = Date(),
          birthPlace: String = "",
+         parent: FamilyMember? = nil,
          isMarriedIntoFamily: Bool = false
     ) {
         self.id = UUID()
@@ -43,6 +44,7 @@ class FamilyMember: Identifiable {
         self.sex = sex
         self.birthDate = birthDate
         self.birthPlace = birthPlace
+        self.parent = parent
         self.isMarriedIntoFamily = isMarriedIntoFamily
         self.siblings = []
         self.children = []

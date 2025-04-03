@@ -22,8 +22,9 @@ struct FamilyMemberDetailView: View {
                 TextField("First Name", text: $member.firstName)
                     .focused($isFocused)
                         .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                isFocused = member.firstName.isEmpty
+                            isFocused = member.firstName.isEmpty
+                            member.children.forEach {
+                                $0.parent = member
                             }
                         }
                 TextField("Middle Name", text: Binding(get: { member.middleName ?? "" }, set: { member.middleName = $0.isEmpty ? nil : $0 }))
@@ -35,30 +36,28 @@ struct FamilyMemberDetailView: View {
                 }
                 .pickerStyle(.segmented)
                 TextField("Birthplace", text: $member.birthPlace)
-                DatePicker("Birthdate", selection: $member.birthDate, displayedComponents: .date)
+                DatePicker(
+                    "Birthdate",
+                    selection: Binding(
+                        get: { member.birthDate },
+                        set: {
+                            member.birthDate = $0
+                            member.parent?.children.sort { $0.birthDate < $1.birthDate }
+                        }),
+                    displayedComponents: .date
+                )
             }
             if enableRelationships {
                 Section(header: Text("Family")) {
                     RelationshipPicker(
-                        title: "Father",
+                        title: "Parent",
                         options: allMembers,
                         selection:
                             Binding(
-                                get: { member.father },
-                                set: { father in
-                                    if let father {
-                                        update(father: father)
-                                    }
-                    }))
-                    RelationshipPicker(
-                        title: "Mother",
-                        options: allMembers,
-                        selection:
-                            Binding(
-                                get: { member.mother },
-                                set: { mother in
-                                    if let mother {
-                                        update(mother: mother)
+                                get: { member.parent },
+                                set: { parent in
+                                    if let parent {
+                                        update(parent: parent)
                                     }
                     }))
                     ForEach(member.siblings, id: \.id) { sibling in
@@ -80,16 +79,9 @@ struct FamilyMemberDetailView: View {
         .navigationTitle(member.fullName)
     }
 
-    func update(father: FamilyMember) {
-        modelContext.insert(father)
-        member.father = father
-        member.siblings.forEach { $0.father = father }
-    }
-
-    func update(mother: FamilyMember) {
-        modelContext.insert(mother)
-        member.mother = mother
-        member.siblings.forEach { $0.mother = mother }
+    func update(parent: FamilyMember) {
+        member.parent = parent
+        member.siblings.forEach { $0.parent = parent }
     }
 
     func update(sibling newSibling: FamilyMember) {
