@@ -37,8 +37,8 @@ struct FamilyMemberView: View {
                 }
             }
 
-            if !member.isMarriedIntoFamily {
-                HStack(spacing: 4) {
+            HStack(spacing: 4) {
+                if !member.isMarriedIntoFamily {
                     Button(action: {
                         let newParent = FamilyMember(lastName: lastNameForChild)
                         member.parent = newParent
@@ -57,14 +57,14 @@ struct FamilyMemberView: View {
                     }) {
                         Label("Spouse", systemImage: "heart.circle")
                     }
-                    Button(role: .destructive) {
-                        onDelete(member)
-                    } label: {
-                        Image(systemName: "trash")
-                    }
                 }
-                .padding(.top, 4)
+                Button(role: .destructive) {
+                    onDelete(member)
+                } label: {
+                    Image(systemName: "trash")
+                }
             }
+            .padding(.top, 4)
         }
     }
 

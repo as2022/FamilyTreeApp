@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+import SwiftUI
+
 /// A simple Diagram. It's not very performant yet, but works great for smallish roots.
 struct Diagram<V: View>: View {
     @Binding var root: FamilyMember
@@ -17,14 +19,22 @@ struct Diagram<V: View>: View {
 
     var body: some View {
         VStack(alignment: .center) {
-            HStack(spacing: 20) {
+//            if root.parent == nil {
+//                Button("Add Parent") {
+//                    let newParent = FamilyMember(firstName: "New", lastName: "Parent")
+//                    newParent.children = [root]
+//                    root.parent = newParent
+//                    root = newParent // ← Update binding so this new node is now the root
+//                }
+//            }
+            HStack(alignment: .top, spacing: 20) {
                 node($root)
                     .anchorPreference(key: Key.self, value: .center, transform: {
                         [self.root.id: $0]
                     })
                 if let spouse = root.spouse {
                     Diagram(
-                        root: Binding(get: { spouse }, set: { root.spouse = $0 }) ,
+                        root: Binding(get: { spouse }, set: { root.spouse = $0 }),
                         node: self.node
                     )
                 }
@@ -34,22 +44,22 @@ struct Diagram<V: View>: View {
                     Diagram(root: child, node: self.node)
                 }
             }
-        }.backgroundPreferenceValue(Key.self, { (centers: [FamilyMember.ID: Anchor<CGPoint>]) in
+        }
+        .backgroundPreferenceValue(Key.self, { (centers: [FamilyMember.ID: Anchor<CGPoint>]) in
             GeometryReader { proxy in
-                ForEach(self.root.children, id: \.id, content: {
-                 child in
-                    Line(
-                        from: proxy[centers[self.root.id]!],
-                        to: proxy[centers[child.id]!])
-                    .stroke(style: StrokeStyle.init(lineWidth: 10, lineCap: .round))
-                    .foregroundStyle(Color.brown.opacity(0.6))
-                })
-                if let spouse = root.spouse {
-                    Line(
-                        from: proxy[centers[self.root.id]!],
-                        to: proxy[centers[spouse.id]!])
-                    .stroke(style: StrokeStyle.init(lineWidth: 10, lineCap: .round))
-                    .foregroundStyle(Color.brown.opacity(0.6))
+                ForEach(self.root.children, id: \.id) { child in
+                    if let from = centers[self.root.id], let to = centers[child.id] {
+                        Line(from: proxy[from], to: proxy[to])
+                            .stroke(style: StrokeStyle(lineWidth: 10, lineCap: .round))
+                            .foregroundStyle(Color.brown.opacity(0.6))
+                    }
+                }
+                if let spouse = root.spouse,
+                   let from = centers[self.root.id],
+                   let to = centers[spouse.id] {
+                    Line(from: proxy[from], to: proxy[to])
+                        .stroke(style: StrokeStyle(lineWidth: 10, lineCap: .round))
+                        .foregroundStyle(Color.brown.opacity(0.6))
                 }
             }
         })
