@@ -19,10 +19,14 @@ struct FamilyTreeView: View {
             Text("Family Tree")
                 .font(.headline)
                 .onAppear {
-                    if let member = allMembers.first {
+                    if let member = allMembers.first(where: { $0.isTopOfBloodline }) {
                         tree = member
                     } else {
+                        allMembers.forEach {
+                            modelContext.delete($0)
+                        }
                         let newPerson = FamilyMember(firstName: "Root", lastName: "Node")
+                        newPerson.isTopOfBloodline = true
                         modelContext.insert(newPerson)
                         tree = newPerson
                     }
@@ -34,11 +38,22 @@ struct FamilyTreeView: View {
                     .font(.caption)
             }
             ScrollView([.vertical, .horizontal]) {
-                Diagram(root: $tree, node: { node in
-                    FamilyMemberView(member: node.wrappedValue, onDelete: { member in
-                        tree.delete(person: member)
-                    })
-                })
+                Diagram(
+                    root: $tree,
+                    node: { node in
+                        FamilyMemberView(
+                            member: node.wrappedValue,
+                            onDelete: { member in
+                                tree.delete(person: member)
+                            }
+                        )
+                    },
+                    newRoot: { newRoot in
+                        newRoot.isTopOfBloodline = true
+                        tree.isTopOfBloodline = false
+                        tree = newRoot
+                    }
+                )
             }
         }
     }

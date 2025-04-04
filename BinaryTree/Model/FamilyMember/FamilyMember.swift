@@ -14,6 +14,7 @@ class FamilyMember: Identifiable {
         [firstName, middleName, lastName].compactMap { $0 }.joined(separator: " ")
     }
     var id: UUID
+    var isTopOfBloodline: Bool = false
     var firstName: String
     var middleName: String?
     var lastName: String
