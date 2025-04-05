@@ -12,6 +12,8 @@ struct FamilyMemberView: View {
     @Bindable var member: FamilyMember
     @State private var isDetailPresented = false
     let onDelete: (FamilyMember) -> Void
+    var newRoot: ((FamilyMember) -> Void)?
+    var newBloodline: (_ child: FamilyMember, _ newParent: FamilyMember) -> Void
 
     var body: some View {
         VStack {
@@ -43,13 +45,29 @@ struct FamilyMemberView: View {
                         let newChild = FamilyMember(lastName: lastNameForChild, parent: member)
                         member.children.append(newChild)
                     }) {
-                        Label("Child", systemImage: "person.fill.badge.plus")
+                        Image(systemName: "arrowshape.down.fill")
                     }
                     Button(action: {
                         let newSpouse = FamilyMember(sex: member.sex?.opposite ?? nil, isMarriedIntoFamily: true)
                         member.spouse = newSpouse
                     }) {
-                        Label("Spouse", systemImage: "heart.circle")
+                        Image(systemName: "heart.circle")
+                    }
+                }
+                if member.isTopOfBloodline || member.isMarriedIntoFamily {
+                    Button(action: {
+                        let newParent = FamilyMember(firstName: "New", lastName: "Parent")
+
+                        if member.isTopOfBloodline {
+                            newParent.children = [member]
+                            member.parent = newParent
+                            newRoot?(newParent)
+                        } else {
+                            member.parent = newParent
+                            newBloodline(member, newParent)
+                        }
+                    }) {
+                        Image(systemName: "arrowshape.up.fill")
                     }
                 }
                 Button(role: .destructive) {
@@ -73,7 +91,7 @@ struct FamilyMemberView: View {
     }
 
     private var backgroundColor: Color {
-        member.sex == .male ? CustomColor.softBlue :  member.sex == .female ? CustomColor.softPink : CustomColor.lightGray
+        member.sex == .male ? ColorTheme.softBlue :  member.sex == .female ? ColorTheme.softPink : ColorTheme.lightGray
     }
 
     private func formattedDate(_ date: Date) -> String {

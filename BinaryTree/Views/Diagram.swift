@@ -8,8 +8,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 /// A simple Diagram. It's not very performant yet, but works great for smallish roots.
 struct Diagram<V: View>: View {
 
@@ -17,23 +15,9 @@ struct Diagram<V: View>: View {
 
     @Binding var root: FamilyMember
     var node: (Binding<FamilyMember>) -> V
-    var newRoot: ((FamilyMember) -> Void)?
-    var newBloodline: (FamilyMember) -> Void
 
     var body: some View {
         VStack(alignment: .center) {
-            if root.isMarriedIntoFamily || root.isTopOfBloodline {
-                Button("Add Parent") {
-                    let newParent = FamilyMember(firstName: "New", lastName: "Parent")
-                    newParent.children = [root]
-                    root.parent = newParent
-                    if root.isTopOfBloodline {
-                        newRoot?(newParent)
-                    } else {
-                        newBloodline(newParent)
-                    }
-                }
-            }
             HStack(alignment: .top, spacing: 20) {
                 node($root)
                     .anchorPreference(key: Key.self, value: .center, transform: {
@@ -42,14 +26,13 @@ struct Diagram<V: View>: View {
                 if let spouse = root.spouse {
                     Diagram(
                         root: Binding(get: { spouse }, set: { root.spouse = $0 }),
-                        node: self.node,
-                        newBloodline: newBloodline
+                        node: self.node
                     )
                 }
             }
             HStack(alignment: .top, spacing: 20) {
                 ForEach($root.children.sorted(by: { $0.wrappedValue.birthDate < $1.wrappedValue.birthDate }), id: \.id) { child in
-                    Diagram(root: child, node: self.node, newBloodline: newBloodline)
+                    Diagram(root: child, node: self.node)
                 }
             }
         }

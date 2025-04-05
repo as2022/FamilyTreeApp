@@ -9,6 +9,12 @@ import Foundation
 
 extension FamilyMember {
 
+    var familySize: Int {
+        let retVal = 1 + children.reduce(0) { $0 + $1.familySize }
+        print("\(fullName)'s family size is: \(retVal)")
+        return retVal
+    }
+
     func delete(person: FamilyMember) {
         if children.contains(where: { $0 == person }) {
             children.removeAll(where: { $0 == person })

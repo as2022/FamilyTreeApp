@@ -14,6 +14,6 @@ struct BinaryTreeApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: FamilyMember.self)
+        .modelContainer(for: [FamilyMember.self, CrossBloodLineConnection.self])
     }
 }
