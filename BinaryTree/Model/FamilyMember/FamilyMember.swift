@@ -40,6 +40,7 @@ class FamilyMember: Identifiable {
          birthDate: Date = Date(),
          birthPlace: String = "",
          parent: FamilyMember? = nil,
+         spouse: FamilyMember? = nil,
          bloodlineConnectionChild: FamilyMember? = nil,
          isMarriedIntoFamily: Bool = false,
          connectsTwoBloodlines: Bool = false,
@@ -53,9 +54,10 @@ class FamilyMember: Identifiable {
         self.birthDate = birthDate
         self.birthPlace = birthPlace
         self.parent = parent
+        self.spouse = spouse
+        self.connectsTwoBloodlines = connectsTwoBloodlines
         self.bloodlineConnectionChild = bloodlineConnectionChild
         self.isMarriedIntoFamily = isMarriedIntoFamily
-        self.connectsTwoBloodlines = connectsTwoBloodlines
         self.isTopOfBloodline = isTopOfBloodline
         self.children = []
     }

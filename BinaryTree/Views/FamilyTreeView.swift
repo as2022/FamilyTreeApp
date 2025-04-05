@@ -31,13 +31,16 @@ struct FamilyTreeView: View {
                         allMembers.forEach {
                             modelContext.delete($0)
                         }
-                        let newPerson = FamilyMember(firstName: "Root", lastName: "Node")
+                        allCrossBloodLineConnections.forEach {
+                            modelContext.delete($0)
+                        }
+                        let newPerson = createInitialFamily()
+                        
                         newPerson.isTopOfBloodline = true
                         modelContext.insert(newPerson)
                         trees.append(newPerson)
                     } else {
                         trees = roots
-
                     }
                     // Cross bloodline connections
                     crossBloodLineConnections = allCrossBloodLineConnections
@@ -67,12 +70,9 @@ struct FamilyTreeView: View {
                                     .stroke(style: StrokeStyle(lineWidth: 10, lineCap: .round))
                                     .foregroundStyle(ConnectionColor.allCases[index].color)
                                 } else {
-                                    VStack {
-                                        Text("Missing anchor for \(name(for: connection.fromChild.uuidString)) or \(name(for: connection.toNewParent.uuidString))")
-                                        Text("Here are the centers:")
-                                        Text(centers.map { name(for: $0.key.uuidString) }.joined(separator: "\n"))
-                                            .lineLimit(nil)
-                                    }
+                                    Image(systemName: "exclamationmark.triangle.fill")
+                                        .scaleEffect(5)
+                                        .background(Color.red.opacity(0.9))
                                 }
                             }
                         }
@@ -96,11 +96,13 @@ struct FamilyTreeView: View {
                     node: { node in
                         FamilyMemberView(
                             member: node.wrappedValue,
-                            onDelete: { member in
-                                tree.wrappedValue.delete(person: member)
+                            onDelete: { member, needsHelpDeletingSpousalReference in
+                                if needsHelpDeletingSpousalReference {
+                                    tree.wrappedValue.delete(spouse: member)
+                                }
+                                removeReferencesToMember(member)
                             },
                             newRoot: { newRoot in
-                                tree.wrappedValue.isTopOfBloodline = false
                                 tree.wrappedValue = newRoot
                             },
                             newBloodline: { child, parent in
@@ -128,6 +130,23 @@ struct FamilyTreeView: View {
 
     }
 
+    private func removeReferencesToMember(_ member: FamilyMember) {
+        crossBloodLineConnections.removeAll(where: { connection in
+            if connection.fromChild == member.id || connection.toNewParent == member.id {
+                modelContext.delete(connection)
+                return true
+            } else {
+                return false
+            }
+        })
+
+        // Delete Entire Family if is the last one
+        if member.isTopOfBloodline, member.familySize == 1, let index = trees.firstIndex(of: member) {
+            trees.remove(at: index)
+        }
+        modelContext.delete(member)
+    }
+
     private func provideOutlineColor(for person: FamilyMember) -> Color {
         if let indexOfConnection = crossBloodLineConnections
             .firstIndex(where: { $0.fromChild == person.id || $0.toNewParent == person.id })
@@ -137,4 +156,17 @@ struct FamilyTreeView: View {
             return .clear
         }
     }
+
+    private func createInitialFamily() -> FamilyMember {
+        let ralph = FamilyMember(firstName: "Ralph", lastName: "Smith", sex: .male)
+        let terri = FamilyMember(firstName: "Terri", lastName: "Smith", sex: .female)
+        terri.children.append(FamilyMember(firstName: "Kirsten", lastName: "Smithson", sex: .female))
+        terri.children.append(FamilyMember(firstName: "Drew", lastName: "Smithson", sex: .male))
+        terri.children.append(FamilyMember(firstName: "Alex", lastName: "Smithson", sex: .male))
+        let tim = FamilyMember(firstName: "Tim", lastName: "Smithson", sex: .male, isMarriedIntoFamily: true)
+        terri.spouse = tim
+        ralph.children.append(terri)
+        return ralph
+    }
 }
+
