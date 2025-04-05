@@ -12,23 +12,29 @@ struct FamilyTreeView: View {
 
     @Environment(\.modelContext) private var modelContext
     @Query private var allMembers: [FamilyMember]
-    @State private var tree: FamilyMember = FamilyMember(firstName: "Loading", lastName: "Tree")
+    @State private var trees = [FamilyMember]()
+//    @State private var tree: FamilyMember = FamilyMember(firstName: "Loading", lastName: "Tree")
+
 
     var body: some View {
         VStack {
             Text("Family Tree")
                 .font(.headline)
                 .onAppear {
-                    if let member = allMembers.first(where: { $0.isTopOfBloodline }) {
-                        tree = member
-                    } else {
+                    let roots = allMembers.filter({ $0.isTopOfBloodline })
+                    if roots.isEmpty {
                         allMembers.forEach {
                             modelContext.delete($0)
                         }
                         let newPerson = FamilyMember(firstName: "Root", lastName: "Node")
                         newPerson.isTopOfBloodline = true
                         modelContext.insert(newPerson)
-                        tree = newPerson
+//                        tree = newPerson
+                        trees.append(newPerson)
+                    } else {
+//                        tree = roots[0]
+                        trees = roots
+
                     }
                 }
             if allMembers.isEmpty {
@@ -38,22 +44,43 @@ struct FamilyTreeView: View {
                     .font(.caption)
             }
             ScrollView([.vertical, .horizontal]) {
-                Diagram(
-                    root: $tree,
-                    node: { node in
-                        FamilyMemberView(
-                            member: node.wrappedValue,
-                            onDelete: { member in
-                                tree.delete(person: member)
+                HStack {
+                    ForEach($trees.wrappedValue, id: \.id) { tree in
+                        Diagram(
+                            root: Binding(
+                                get: { tree },
+                                set: { newTree in
+                                    let index = trees.firstIndex(where: { $0.id == tree.id })
+                                    if let index = index {
+                                        trees[index] = newTree
+                                    }
+                                }
+                            ),
+                            node: { node in
+                                FamilyMemberView(
+                                    member: node.wrappedValue,
+                                    onDelete: { member in
+                                        if member == node.wrappedValue {
+                                            modelContext.delete(member)
+                                            trees.removeAll { $0.id == member.id }
+                                        } else {
+                                            tree.delete(person: member)
+                                        }
+                                    }
+                                )
+                            },
+                            newRoot: { newRoot in
+                                newRoot.isTopOfBloodline = true
+                                tree.isTopOfBloodline = false
+//                                trees = newRoot
+                            },
+                            newBloodline: { newBloodline in
+                                newBloodline.isTopOfBloodline = true
+                                trees.append(newBloodline)
                             }
                         )
-                    },
-                    newRoot: { newRoot in
-                        newRoot.isTopOfBloodline = true
-                        tree.isTopOfBloodline = false
-                        tree = newRoot
                     }
-                )
+                }
             }
         }
     }

@@ -18,6 +18,7 @@ struct Diagram<V: View>: View {
     @Binding var root: FamilyMember
     var node: (Binding<FamilyMember>) -> V
     var newRoot: ((FamilyMember) -> Void)?
+    var newBloodline: (FamilyMember) -> Void
 
     var body: some View {
         VStack(alignment: .center) {
@@ -28,6 +29,8 @@ struct Diagram<V: View>: View {
                     root.parent = newParent
                     if root.isTopOfBloodline {
                         newRoot?(newParent)
+                    } else {
+                        newBloodline(newParent)
                     }
                 }
             }
@@ -39,13 +42,14 @@ struct Diagram<V: View>: View {
                 if let spouse = root.spouse {
                     Diagram(
                         root: Binding(get: { spouse }, set: { root.spouse = $0 }),
-                        node: self.node
+                        node: self.node,
+                        newBloodline: newBloodline
                     )
                 }
             }
             HStack(alignment: .top, spacing: 20) {
                 ForEach($root.children.sorted(by: { $0.wrappedValue.birthDate < $1.wrappedValue.birthDate }), id: \.id) { child in
-                    Diagram(root: child, node: self.node)
+                    Diagram(root: child, node: self.node, newBloodline: newBloodline)
                 }
             }
         }
