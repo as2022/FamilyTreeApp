@@ -13,19 +13,24 @@ class FamilyMember: Identifiable {
     var fullName: String {
         [firstName, middleName, lastName].compactMap { $0 }.joined(separator: " ")
     }
+
+    // Intrinsic properties
     var id: UUID
-    var isTopOfBloodline: Bool = false
     var firstName: String
     var middleName: String?
     var lastName: String
     var sex: Sex?
     var birthDate: Date
     var birthPlace: String
+
+    // Relational Properties
+    var connectsTwoBloodlines: Bool
     var isMarriedIntoFamily: Bool
+    var isTopOfBloodline: Bool
 
     @Relationship var parent: FamilyMember?
-    @Relationship var siblings: [FamilyMember]
     @Relationship var spouse: FamilyMember?
+    @Relationship var bloodlineConnectionChild: FamilyMember?
     @Relationship var children: [FamilyMember]
     
     init(firstName: String = "",
@@ -35,7 +40,10 @@ class FamilyMember: Identifiable {
          birthDate: Date = Date(),
          birthPlace: String = "",
          parent: FamilyMember? = nil,
-         isMarriedIntoFamily: Bool = false
+         bloodlineConnectionChild: FamilyMember? = nil,
+         isMarriedIntoFamily: Bool = false,
+         connectsTwoBloodlines: Bool = false,
+         isTopOfBloodline: Bool = false
     ) {
         self.id = UUID()
         self.firstName = firstName
@@ -45,8 +53,10 @@ class FamilyMember: Identifiable {
         self.birthDate = birthDate
         self.birthPlace = birthPlace
         self.parent = parent
+        self.bloodlineConnectionChild = bloodlineConnectionChild
         self.isMarriedIntoFamily = isMarriedIntoFamily
-        self.siblings = []
+        self.connectsTwoBloodlines = connectsTwoBloodlines
+        self.isTopOfBloodline = isTopOfBloodline
         self.children = []
     }
 }

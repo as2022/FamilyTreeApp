@@ -36,7 +36,7 @@ struct RelationshipPicker: View {
             }
             .sheet(item: $newMember) { newMember in
                 NavigationStack {
-                    FamilyMemberDetailView(member: newMember, enableRelationships: false)
+                    FamilyMemberDetailView(member: newMember)
                         .toolbar {
                             ToolbarItem(placement: .topBarLeading) {
                                 Button("Cancel") {

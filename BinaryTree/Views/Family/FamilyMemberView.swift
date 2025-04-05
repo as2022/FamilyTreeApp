@@ -14,6 +14,7 @@ struct FamilyMemberView: View {
     let onDelete: (FamilyMember) -> Void
     var newRoot: ((FamilyMember) -> Void)?
     var newBloodline: (_ child: FamilyMember, _ newParent: FamilyMember) -> Void
+    let outlineColor: Color
 
     var body: some View {
         VStack {
@@ -29,8 +30,11 @@ struct FamilyMemberView: View {
                             .foregroundColor(.gray)
                     }
                     .padding()
-                    .background(backgroundColor)
-                    .cornerRadius(16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(backgroundColor)
+                            .stroke(outlineColor, lineWidth: 10)
+                    )
                 }
                 .sheet(isPresented: $isDetailPresented) {
                     NavigationStack {
@@ -54,16 +58,20 @@ struct FamilyMemberView: View {
                         Image(systemName: "heart.circle")
                     }
                 }
-                if member.isTopOfBloodline || member.isMarriedIntoFamily {
+                if member.isTopOfBloodline || member.isMarriedIntoFamily, !member.connectsTwoBloodlines {
                     Button(action: {
                         let newParent = FamilyMember(firstName: "New", lastName: "Parent")
+                        newParent.isTopOfBloodline = true
+                        member.parent = newParent
 
                         if member.isTopOfBloodline {
                             newParent.children = [member]
-                            member.parent = newParent
                             newRoot?(newParent)
                         } else {
-                            member.parent = newParent
+                            newParent.connectsTwoBloodlines = true
+                            newParent.bloodlineConnectionChild = member
+                            member.connectsTwoBloodlines = true
+
                             newBloodline(member, newParent)
                         }
                     }) {
@@ -80,6 +88,7 @@ struct FamilyMemberView: View {
         }
     }
 
+    
     private var lastNameForChild: String {
         if member.sex == .male {
             member.lastName
