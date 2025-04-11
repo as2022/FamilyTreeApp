@@ -25,6 +25,7 @@ struct FamilyMemberView: View {
                     VStack {
                         Text(member.fullName)
                             .font(.headline)
+                            .foregroundColor(genderColor)
                         Text("Born: \(formattedDate(member.birthDate))")
                             .font(.subheadline)
                             .foregroundColor(.gray)
@@ -32,7 +33,7 @@ struct FamilyMemberView: View {
                     .padding()
                     .background(
                         Capsule()
-                            .fill(backgroundColor)
+                            .fill(ColorTheme.lightGreen)
                             .stroke(outlineColor, lineWidth: 10)
                     )
                 }
@@ -98,7 +99,7 @@ struct FamilyMemberView: View {
     }
 
     
-    private var lastNameForChild: String {
+    private var lastNameForChild: String? {
         if member.sex == .male {
             member.lastName
         } else if let spouse = member.spouse, spouse.sex == .male {
@@ -108,8 +109,8 @@ struct FamilyMemberView: View {
         }
     }
 
-    private var backgroundColor: Color {
-        member.sex == .male ? ColorTheme.softBlue :  member.sex == .female ? ColorTheme.softPink : ColorTheme.lightGray
+    private var genderColor: Color {
+        member.sex == .male ? ColorTheme.deepBlue :  member.sex == .female ? ColorTheme.brightPink : ColorTheme.darkGray
     }
 
     private func formattedDate(_ date: Date) -> String {

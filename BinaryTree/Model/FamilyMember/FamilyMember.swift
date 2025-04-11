@@ -16,12 +16,12 @@ class FamilyMember: Identifiable {
 
     // Intrinsic properties
     var id: UUID
-    var firstName: String
+    var firstName: String?
     var middleName: String?
-    var lastName: String
+    var lastName: String?
     var sex: Sex?
     var birthDate: Date
-    var birthPlace: String
+    var birthPlace: String?
 
     // Relational Properties
     var connectsTwoBloodlines: Bool
@@ -33,9 +33,9 @@ class FamilyMember: Identifiable {
     @Relationship var bloodlineConnectionChild: FamilyMember?
     @Relationship var children: [FamilyMember]
     
-    init(firstName: String = "",
+    init(firstName: String? = nil,
          middleName: String? = nil,
-         lastName: String = "",
+         lastName: String? = nil,
          sex: Sex? = nil,
          birthDate: Date = Date(),
          birthPlace: String = "",

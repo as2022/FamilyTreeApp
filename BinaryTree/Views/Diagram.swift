@@ -17,7 +17,7 @@ struct Diagram<V: View>: View {
     var node: (Binding<FamilyMember>) -> V
 
     var body: some View {
-        VStack(alignment: .center) {
+        VStack(alignment: .center, spacing: 20) {
             HStack(alignment: .top, spacing: 20) {
                 node($root)
                     .anchorPreference(key: Key.self, value: .center, transform: {

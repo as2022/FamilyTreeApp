@@ -15,17 +15,6 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             FamilyTreeView()
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
-                        do {
-                            try modelContext.save()
-                        } catch {
-                            print("Failed to save context: \(error)")
-                        }
-                    }
-                }
-            }
         }
     }
 }

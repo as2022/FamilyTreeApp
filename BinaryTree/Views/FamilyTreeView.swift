@@ -45,15 +45,9 @@ struct FamilyTreeView: View {
                     // Cross bloodline connections
                     crossBloodLineConnections = allCrossBloodLineConnections
                 }
-            if allMembers.isEmpty {
-                Text("Welcome to the Family Tree App!")
-                    .font(.headline)
-                Text("Click the 'Add' button to start building your family tree.")
-                    .font(.caption)
-            }
             ScrollView([.vertical, .horizontal]) {
                 HStack(alignment: .top, spacing: 50) {
-                    ForEach($trees.sorted(by: { $0.wrappedValue.familySize > $1.wrappedValue.familySize }), id: \.id) { $tree in
+                    ForEach($trees.sorted(by: { $0.wrappedValue.familySize > $1.wrappedValue.familySize })) { $tree in
                         makeTree(for: $tree)
                     }
                 }
@@ -90,7 +84,7 @@ struct FamilyTreeView: View {
     func makeTree(for tree: Binding<FamilyMember>) -> some View {
         ZStack {
             VStack(alignment: .center, spacing: 20) {
-                Text("\(tree.wrappedValue.lastName) Family")
+                Text("\(tree.wrappedValue.lastName ?? tree.wrappedValue.firstName ?? "My") Family")
                 Diagram(
                     root: tree,
                     node: { node in
@@ -158,15 +152,12 @@ struct FamilyTreeView: View {
     }
 
     private func createInitialFamily() -> FamilyMember {
-        let ralph = FamilyMember(firstName: "Ralph", lastName: "Smith", sex: .male)
-        let terri = FamilyMember(firstName: "Terri", lastName: "Smith", sex: .female)
-        terri.children.append(FamilyMember(firstName: "Kirsten", lastName: "Smithson", sex: .female))
-        terri.children.append(FamilyMember(firstName: "Drew", lastName: "Smithson", sex: .male))
-        terri.children.append(FamilyMember(firstName: "Alex", lastName: "Smithson", sex: .male))
-        let tim = FamilyMember(firstName: "Tim", lastName: "Smithson", sex: .male, isMarriedIntoFamily: true)
-        terri.spouse = tim
-        ralph.children.append(terri)
-        return ralph
+        let grandpa = FamilyMember(firstName: "Grandpa", sex: .male)
+        let mom = FamilyMember(firstName: "Mom", sex: .female, isMarriedIntoFamily: true)
+        let dad = FamilyMember(firstName: "Dad", sex: .male, spouse: mom)
+        dad.children.append(FamilyMember(firstName: "Me"))
+        grandpa.children.append(dad)
+        return grandpa
     }
 }
 
