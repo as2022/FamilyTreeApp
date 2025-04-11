@@ -44,10 +44,10 @@ struct FamilyMemberDetailView: View {
         }
         .navigationTitle(memberDraft.fullName)
         .onAppear {
-            memberDraft.update(with: member)
+            memberDraft.updateDetails(using: member)
         }
         .onDisappear {
-            member.update(with: memberDraft)
+            member.updateDetails(using: memberDraft)
         }
     }
 }

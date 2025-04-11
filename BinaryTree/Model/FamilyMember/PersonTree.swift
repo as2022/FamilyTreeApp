@@ -50,24 +50,12 @@ extension FamilyMember {
         return nil
     }
 
-    func update(with: FamilyMember) {
-        id = with.id
-        firstName = with.firstName
-        middleName = with.middleName
-        lastName = with.lastName
-        sex = with.sex
-        children.removeAll()
-        with.children.forEach { children.append($0) }
-        birthDate = with.birthDate
-        birthPlace = with.birthPlace
-
-        connectsTwoBloodlines = with.connectsTwoBloodlines
-        isMarriedIntoFamily = with.isMarriedIntoFamily
-        isTopOfBloodline = with.isTopOfBloodline
-
-        parent = with.parent
-        spouse = with.spouse
-        bloodlineConnectionChild = with.bloodlineConnectionChild
-        children = with.children
+    func updateDetails(using other: FamilyMember) {
+        firstName = other.firstName
+        middleName = other.middleName
+        lastName = other.lastName
+        sex = other.sex
+        birthDate = other.birthDate
+        birthPlace = other.birthPlace
     }
 }

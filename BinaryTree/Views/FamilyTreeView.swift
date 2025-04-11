@@ -19,6 +19,8 @@ struct FamilyTreeView: View {
 
     @State private var trees = [FamilyMember]()
     @State private var crossBloodLineConnections = [CrossBloodLineConnection]()
+    @State private var draggingFromMemberID: FamilyMember.ID?
+
 
     var body: some View {
         VStack {
@@ -45,7 +47,7 @@ struct FamilyTreeView: View {
                     // Cross bloodline connections
                     crossBloodLineConnections = allCrossBloodLineConnections
                 }
-            ScrollView([.vertical, .horizontal]) {
+            ZoomableView {
                 HStack(alignment: .top, spacing: 50) {
                     ForEach($trees.sorted(by: { $0.wrappedValue.familySize > $1.wrappedValue.familySize })) { $tree in
                         makeTree(for: $tree)
@@ -106,7 +108,7 @@ struct FamilyTreeView: View {
                                 // to the new bloodline root (the parent)
                                 let newConnection = CrossBloodLineConnection(fromChild: child.id, toNewParent: parent.id)
                                 crossBloodLineConnections.append(newConnection)
-                                modelContext.insert(CrossBloodLineConnection(fromChild: child.id, toNewParent: parent.id))
+                                modelContext.insert(newConnection)
                             },
                             outlineColor: provideOutlineColor(for: node.wrappedValue)
                         )
