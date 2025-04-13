@@ -5,14 +5,20 @@
 //  Created by Alex Smithson on 3/15/25.
 //
 
-import SwiftUI
+import Firebase
 import SwiftData
+import SwiftUI
 
 @main
 struct BinaryTreeApp: App {
+
+    init() {
+        FirebaseApp.configure()
+    }
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AuthView()
         }
         .modelContainer(for: [FamilyMember.self, CrossBloodLineConnection.self])
     }

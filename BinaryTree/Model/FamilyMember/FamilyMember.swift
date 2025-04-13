@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class FamilyMember: Identifiable {
+class FamilyMember: Codable, Identifiable {
     var fullName: String {
         [firstName, middleName, lastName].compactMap { $0 }.joined(separator: " ")
     }
@@ -60,20 +60,5 @@ class FamilyMember: Identifiable {
         self.isMarriedIntoFamily = isMarriedIntoFamily
         self.isTopOfBloodline = isTopOfBloodline
         self.children = []
-    }
-}
-
-enum Sex: String, CaseIterable, Identifiable, Codable {
-
-    case male
-    case female
-
-    var id: String { self.rawValue }
-
-    var opposite: Sex {
-        switch self {
-        case .male: return .female
-        case .female: return .male
-        }
     }
 }
