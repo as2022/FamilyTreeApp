@@ -1,5 +1,5 @@
 //
-//  FamilyTreeView.swift
+//  TreeExplorerView.swift
 //  BinaryTree
 //
 //  Created by Alex Smithson on 3/15/25.
@@ -8,7 +8,7 @@
 import SwiftData
 import SwiftUI
 
-struct FamilyTreeView: View {
+struct TreeExplorerView: View {
 
     typealias Key = CollectDict<FamilyMember.ID, Anchor<CGPoint>>
 
@@ -19,68 +19,36 @@ struct FamilyTreeView: View {
 
     @State private var trees = [FamilyMember]()
     @State private var crossBloodLineConnections = [CrossBloodLineConnection]()
-    @State private var draggingFromMemberID: FamilyMember.ID?
-
+    @State private var draggingFromMember: FamilyMember?
+    @State private var personDetailsToPresent: FamilyMember?
 
     var body: some View {
-        VStack {
-            Text("Family Tree")
-                .font(.headline)
-                .onAppear {
-                    // People
-                    let roots = allMembers.filter({ $0.isTopOfBloodline })
-                    if roots.isEmpty {
-                        allMembers.forEach {
-                            modelContext.delete($0)
-                        }
-                        allCrossBloodLineConnections.forEach {
-                            modelContext.delete($0)
-                        }
-                        let newPerson = createInitialFamily()
-                        
-                        newPerson.isTopOfBloodline = true
-                        modelContext.insert(newPerson)
-                        trees.append(newPerson)
-                    } else {
-                        trees = roots
-                    }
-                    // Cross bloodline connections
-                    crossBloodLineConnections = allCrossBloodLineConnections
+        TreeHUDView(
+            manualConnectionMember: $draggingFromMember,
+            personDetailsToPresent: $personDetailsToPresent
+        ) {
+            HStack(alignment: .top, spacing: 50) {
+                ForEach($trees.sorted(by: { $0.wrappedValue.familySize > $1.wrappedValue.familySize })) { $tree in
+                    makeTree(for: $tree)
                 }
-            ZoomableView {
-                HStack(alignment: .top, spacing: 50) {
-                    ForEach($trees.sorted(by: { $0.wrappedValue.familySize > $1.wrappedValue.familySize })) { $tree in
-                        makeTree(for: $tree)
-                    }
-                }
-                .backgroundPreferenceValue(Key.self) { centers in
-                    GeometryReader { proxy in
-                        ZStack {
-                            ForEach(Array(crossBloodLineConnections.enumerated()), id: \.element.fromChild) { index, connection in
-                                if let from = centers[connection.fromChild],
-                                   let to = centers[connection.toNewParent] {
-                                    Path { path in
-                                        path.move(to: proxy[from])
-                                        path.addLine(to: proxy[to])
-                                    }
-                                    .stroke(style: StrokeStyle(lineWidth: 10, lineCap: .round))
-                                    .foregroundStyle(ConnectionColor.allCases[index].color)
-                                } else {
-                                    Image(systemName: "exclamationmark.triangle.fill")
-                                        .scaleEffect(5)
-                                        .background(Color.red.opacity(0.9))
-                                }
-                            }
-                        }
-                    }
-                }
+            }
+            .drawConnections(for: $crossBloodLineConnections)
+        }
+        .onAppear {
+            // People
+            let roots = allMembers.filter({ $0.isTopOfBloodline })
+            if roots.isEmpty {
+                let newPerson = createInitialFamily()
+                modelContext.insert(newPerson)
+                trees.append(newPerson)
+            } else {
+                trees = roots
+                crossBloodLineConnections = allCrossBloodLineConnections
             }
         }
     }
 
-    func name(for Id: String) -> String {
-        allMembers.first(where: { $0.id.uuidString == Id})?.fullName ?? "Unknown"
-    }
+    // MARK: - ViewBuilders
 
     @ViewBuilder
     func makeTree(for tree: Binding<FamilyMember>) -> some View {
@@ -112,6 +80,29 @@ struct FamilyTreeView: View {
                             },
                             outlineColor: provideOutlineColor(for: node.wrappedValue)
                         )
+                        // Tap gesture — only fire if long press didn’t happen
+                        .onTapGesture {
+                            personDetailsToPresent = node.wrappedValue
+                        }
+
+                        // Long press gesture sets the flag
+                        .simultaneousGesture(
+                            LongPressGesture(minimumDuration: 0.5)
+                                .onEnded { _ in
+
+                                    if let fromPerson = draggingFromMember {
+                                        let toID = node.wrappedValue.id
+                                        if fromPerson.id != toID {
+                                            let newConnection = CrossBloodLineConnection(fromChild: fromPerson.id, toNewParent: toID)
+                                            crossBloodLineConnections.append(newConnection)
+                                            modelContext.insert(newConnection)
+                                        }
+                                        draggingFromMember = nil
+                                    } else {
+                                        draggingFromMember = node.wrappedValue
+                                    }
+                                }
+                        )
                     }
                 )
             }
@@ -125,6 +116,8 @@ struct FamilyTreeView: View {
         )
 
     }
+
+    // MARK: - Helper Functions
 
     private func removeReferencesToMember(_ member: FamilyMember) {
         crossBloodLineConnections.removeAll(where: { connection in
@@ -154,7 +147,7 @@ struct FamilyTreeView: View {
     }
 
     private func createInitialFamily() -> FamilyMember {
-        let grandpa = FamilyMember(firstName: "Grandpa", sex: .male)
+        let grandpa = FamilyMember(firstName: "Grandpa", sex: .male, isTopOfBloodline: true)
         let mom = FamilyMember(firstName: "Mom", sex: .female, isMarriedIntoFamily: true)
         let dad = FamilyMember(firstName: "Dad", sex: .male, spouse: mom)
         dad.children.append(FamilyMember(firstName: "Me"))

@@ -10,9 +10,9 @@ import Foundation
 extension FamilyMember {
 
     var familySize: Int {
-        let retVal = 1 + children.reduce(0) { $0 + $1.familySize }
-        print("\(fullName)'s family size is: \(retVal)")
-        return retVal
+        let childrenCount = children.reduce(0) { $0 + $1.familySize }
+        let spouseCount = spouse != nil ? 1 : 0
+        return 1 + spouseCount + childrenCount
     }
 
     func delete(spouse: FamilyMember) {

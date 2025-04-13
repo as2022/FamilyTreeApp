@@ -10,7 +10,6 @@ import SwiftUI
 struct FamilyMemberView: View {
 
     @Bindable var member: FamilyMember
-    @State private var isDetailPresented = false
     let onDelete: (FamilyMember, _ needsHelp: Bool) -> Void
     var newRoot: ((FamilyMember) -> Void)?
     var newBloodline: (_ child: FamilyMember, FamilyMember) -> Void
@@ -19,29 +18,20 @@ struct FamilyMemberView: View {
     var body: some View {
         VStack {
             HStack {
-                Button(action: {
-                    isDetailPresented = true
-                }) {
-                    VStack {
-                        Text(member.fullName)
-                            .font(.headline)
-                            .foregroundColor(genderColor)
-                        Text("Born: \(formattedDate(member.birthDate))")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                    }
-                    .padding()
-                    .background(
-                        Capsule()
-                            .fill(ColorTheme.lightGreen)
-                            .stroke(outlineColor, lineWidth: 10)
-                    )
+                VStack {
+                    Text(member.fullName)
+                        .font(.headline)
+                        .foregroundColor(genderColor)
+                    Text("Born: \(formattedDate(member.birthDate))")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
                 }
-                .sheet(isPresented: $isDetailPresented) {
-                    NavigationStack {
-                        FamilyMemberDetailView(member: member)
-                    }
-                }
+                .padding()
+                .background(
+                    Capsule()
+                        .fill(ColorTheme.lightGreen)
+                        .stroke(outlineColor, lineWidth: 10)
+                )
             }
 
             HStack(spacing: 12) {

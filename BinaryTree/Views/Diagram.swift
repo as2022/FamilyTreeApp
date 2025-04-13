@@ -36,7 +36,7 @@ struct Diagram<V: View>: View {
                 }
             }
         }
-        .backgroundPreferenceValue(Key.self, { (centers: [FamilyMember.ID: Anchor<CGPoint>]) in
+        .backgroundPreferenceValue(Key.self) { centers in
             GeometryReader { proxy in
                 ForEach(self.root.children, id: \.id) { child in
                     if let from = centers[self.root.id], let to = centers[child.id] {
@@ -53,6 +53,6 @@ struct Diagram<V: View>: View {
                         .foregroundStyle(Color.brown.opacity(0.6))
                 }
             }
-        })
+        }
     }
 }

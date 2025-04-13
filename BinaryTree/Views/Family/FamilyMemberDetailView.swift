@@ -12,7 +12,7 @@ struct FamilyMemberDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var allMembers: [FamilyMember]
 
-    @FocusState private var isFocused: Bool
+    @FocusState private var isFirstNameFocused: Bool
     @State var memberDraft = FamilyMember()
     @Bindable var member: FamilyMember
 
@@ -20,7 +20,7 @@ struct FamilyMemberDetailView: View {
         Form {
             Section(header: Text("Personal Information")) {
                 TextField("First Name", text: Binding(get: { memberDraft.firstName ?? "" }, set: { memberDraft.firstName = $0 }))
-                    .focused($isFocused)
+                    .focused($isFirstNameFocused)
                 TextField("Middle Name", text: Binding(get: { memberDraft.middleName ?? "" }, set: { memberDraft.middleName = $0.isEmpty ? nil : $0 }))
                 TextField("Last Name", text: Binding(get: { memberDraft.lastName ?? "" }, set: { memberDraft.lastName = $0 }))
                 Picker("Sex", selection: $memberDraft.sex) {
@@ -45,6 +45,7 @@ struct FamilyMemberDetailView: View {
         .navigationTitle(memberDraft.fullName)
         .onAppear {
             memberDraft.updateDetails(using: member)
+            isFirstNameFocused = member.firstName == nil || member.firstName!.isEmpty
         }
         .onDisappear {
             member.updateDetails(using: memberDraft)
