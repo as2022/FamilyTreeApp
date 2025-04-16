@@ -19,17 +19,18 @@ struct FamilyMemberDetailView: View {
     var body: some View {
         Form {
             Section(header: Text("Personal Information")) {
-                TextField("First Name", text: Binding(get: { memberDraft.firstName ?? "" }, set: { memberDraft.firstName = $0 }))
+                TextField("First Name", text: customBinding(for: $memberDraft.firstName))
                     .focused($isFirstNameFocused)
-                TextField("Middle Name", text: Binding(get: { memberDraft.middleName ?? "" }, set: { memberDraft.middleName = $0.isEmpty ? nil : $0 }))
-                TextField("Last Name", text: Binding(get: { memberDraft.lastName ?? "" }, set: { memberDraft.lastName = $0 }))
+                TextField("Middle Name", text: customBinding(for: $memberDraft.middleName))
+                TextField("Last Name", text: customBinding(for: $memberDraft.lastName))
+                TextField("Suffix", text: customBinding(for: $memberDraft.suffix))
                 Picker("Sex", selection: $memberDraft.sex) {
                     ForEach(Sex.allCases) { sex in
                         Text(sex.rawValue).tag(sex)
                     }
                 }
                 .pickerStyle(.segmented)
-                TextField("Birthplace", text: Binding(get: { memberDraft.birthPlace ?? "" }, set: { memberDraft.birthPlace = $0 }))
+                TextField("Birthplace", text: customBinding(for: $memberDraft.birthPlace))
                 DatePicker(
                     "Birthdate",
                     selection: Binding(
@@ -50,5 +51,9 @@ struct FamilyMemberDetailView: View {
         .onDisappear {
             member.updateDetails(using: memberDraft)
         }
+    }
+
+    private func customBinding(for string: Binding<String?>) -> Binding<String> {
+        Binding(get: { string.wrappedValue ?? "" }, set: { string.wrappedValue = $0.isEmpty ? nil : $0 })
     }
 }

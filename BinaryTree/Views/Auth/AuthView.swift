@@ -6,8 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct AuthView: View {
+
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.colorScheme) var colorScheme
+
     @StateObject private var viewModel = AuthViewModel()
 
     @State private var email = ""
@@ -16,57 +21,55 @@ struct AuthView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            if viewModel.showSuccessMessage {
-                loginSuccessMessage()
-            } else {
-                TextField("Email", text: $email)
-                    .textFieldStyle(.roundedBorder)
-                    .autocapitalization(.none)
-                
-                SecureField("Password", text: $password)
-                    .textFieldStyle(.roundedBorder)
-                
-                // 🔴 Error message (if any)
-                if let error = viewModel.errorMessage {
-                    Text(error)
-                        .foregroundColor(.red)
-                        .font(.caption)
-                }
-                
-                Button(isCreatingAccount ? "Sign Up" : "Log In") {
-                    Task {
-                        if isCreatingAccount {
-                            await viewModel.signUp(email: email, password: password)
-                        } else {
-                            await viewModel.signIn(email: email, password: password)
-                        }
-                        viewModel.checkAuthAndProceed()
+            Image(colorScheme == .dark ? "Dark Logo" : "Logo")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 150, height: 150)
+                .padding(.bottom)
+            TextField("Email", text: $email)
+                .textFieldStyle(.roundedBorder)
+                .autocapitalization(.none)
+
+            SecureField("Password", text: $password)
+                .textFieldStyle(.roundedBorder)
+
+            // 🔴 Error message (if any)
+            if let error = viewModel.errorMessage {
+                Text(error)
+                    .foregroundColor(.red)
+                    .font(.caption)
+            }
+
+            Button(isCreatingAccount ? "Sign Up" : "Log In") {
+                Task {
+                    if isCreatingAccount {
+                        await viewModel.signUp(email: email, password: password)
+                    } else {
+                        await viewModel.signIn(email: email, password: password)
                     }
                 }
-                .buttonStyle(.borderedProminent)
-                
-                Button(isCreatingAccount ? "Already have an account? Log In" : "Don't have an account? Sign Up") {
-                    isCreatingAccount.toggle()
-                }
-                .font(.footnote)
-                .padding()
             }
-        }
-        .onAppear {
-            viewModel.checkAuthAndProceed()
-        }
-        .fullScreenCover(isPresented: $viewModel.proceedToTree) {
-            ContentView()
-        }
-    }
+            .buttonStyle(.borderedProminent)
 
-    // MARK: - ViewBuilders
-
-    @ViewBuilder
-    func loginSuccessMessage() -> some View {
-        Text("✅ Logged in!")
-            .foregroundColor(.green)
-            .font(.subheadline)
-            .transition(.opacity)
+            Button(isCreatingAccount ? "Already have an account? Log In" : "Don't have an account? Sign Up") {
+                isCreatingAccount.toggle()
+            }
+            .font(.footnote)
+            .padding()
+        }
+        .fullScreenCover(item: $viewModel.user) { user in
+            LoadingAppView(user: user)
+        }
     }
 }
+
+#Preview {
+    let schema = Schema([FamilyMember.self, CrossBloodlineConnection.self])
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: schema, configurations: [config])
+
+    return AuthView()
+        .modelContainer(container)
+        .padding()
+}
+

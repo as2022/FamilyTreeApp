@@ -44,6 +44,8 @@ struct TreeHUDView<Content: View>: View {
         }
     }
 
+    // MARK: ViewBuilders
+
     @ViewBuilder
     func addManualConnectionToast(_ manualConnectionMember: FamilyMember) -> some View {
         VStack {

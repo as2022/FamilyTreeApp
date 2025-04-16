@@ -1,5 +1,5 @@
 //
-//  TreeExplorerView.swift
+//  MyTreesView.swift
 //  BinaryTree
 //
 //  Created by Alex Smithson on 3/15/25.
@@ -8,17 +8,15 @@
 import SwiftData
 import SwiftUI
 
-struct TreeExplorerView: View {
-
-    typealias Key = CollectDict<FamilyMember.ID, Anchor<CGPoint>>
+struct MyTreesView: View {
 
     @Environment(\.modelContext) private var modelContext
 
     @Query private var allMembers: [FamilyMember]
-    @Query private var allCrossBloodLineConnections: [CrossBloodLineConnection]
+    @Query private var allCrossBloodlineConnections: [CrossBloodlineConnection]
 
     @State private var trees = [FamilyMember]()
-    @State private var crossBloodLineConnections = [CrossBloodLineConnection]()
+    @State private var crossBloodlineConnections = [CrossBloodlineConnection]()
     @State private var draggingFromMember: FamilyMember?
     @State private var personDetailsToPresent: FamilyMember?
 
@@ -32,7 +30,7 @@ struct TreeExplorerView: View {
                     makeTree(for: $tree)
                 }
             }
-            .drawConnections(for: $crossBloodLineConnections)
+            .drawConnections(for: $crossBloodlineConnections)
         }
         .onAppear {
             // People
@@ -43,7 +41,7 @@ struct TreeExplorerView: View {
                 trees.append(newPerson)
             } else {
                 trees = roots
-                crossBloodLineConnections = allCrossBloodLineConnections
+                crossBloodlineConnections = allCrossBloodlineConnections
             }
         }
     }
@@ -63,6 +61,8 @@ struct TreeExplorerView: View {
                             onDelete: { member, needsHelpDeletingSpousalReference in
                                 if needsHelpDeletingSpousalReference {
                                     tree.wrappedValue.delete(spouse: member)
+                                } else {
+                                    tree.wrappedValue.delete(member)
                                 }
                                 removeReferencesToMember(member)
                             },
@@ -74,8 +74,8 @@ struct TreeExplorerView: View {
                                 
                                 // Capture the connection from the current root (the child)
                                 // to the new bloodline root (the parent)
-                                let newConnection = CrossBloodLineConnection(fromChild: child.id, toNewParent: parent.id)
-                                crossBloodLineConnections.append(newConnection)
+                                let newConnection = CrossBloodlineConnection(fromChild: child.id, toNewParent: parent.id)
+                                crossBloodlineConnections.append(newConnection)
                                 modelContext.insert(newConnection)
                             },
                             outlineColor: provideOutlineColor(for: node.wrappedValue)
@@ -89,12 +89,11 @@ struct TreeExplorerView: View {
                         .simultaneousGesture(
                             LongPressGesture(minimumDuration: 0.5)
                                 .onEnded { _ in
-
                                     if let fromPerson = draggingFromMember {
                                         let toID = node.wrappedValue.id
                                         if fromPerson.id != toID {
-                                            let newConnection = CrossBloodLineConnection(fromChild: fromPerson.id, toNewParent: toID)
-                                            crossBloodLineConnections.append(newConnection)
+                                            let newConnection = CrossBloodlineConnection(fromChild: fromPerson.id, toNewParent: toID)
+                                            crossBloodlineConnections.append(newConnection)
                                             modelContext.insert(newConnection)
                                         }
                                         draggingFromMember = nil
@@ -120,7 +119,7 @@ struct TreeExplorerView: View {
     // MARK: - Helper Functions
 
     private func removeReferencesToMember(_ member: FamilyMember) {
-        crossBloodLineConnections.removeAll(where: { connection in
+        crossBloodlineConnections.removeAll(where: { connection in
             if connection.fromChild == member.id || connection.toNewParent == member.id {
                 modelContext.delete(connection)
                 return true
@@ -137,7 +136,7 @@ struct TreeExplorerView: View {
     }
 
     private func provideOutlineColor(for person: FamilyMember) -> Color {
-        if let indexOfConnection = crossBloodLineConnections
+        if let indexOfConnection = crossBloodlineConnections
             .firstIndex(where: { $0.fromChild == person.id || $0.toNewParent == person.id })
         {
             return ConnectionColor.allCases[indexOfConnection].color

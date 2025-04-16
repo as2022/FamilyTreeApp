@@ -6,20 +6,34 @@
 //
 
 import Firebase
+import FirebaseAuth
 import SwiftData
 import SwiftUI
 
 @main
-struct BinaryTreeApp: App {
+struct FamilyTreeApp: App {
+    let container: ModelContainer
 
     init() {
         FirebaseApp.configure()
+
+        let schema = Schema([
+            FamilyMember.self,
+            CrossBloodlineConnection.self
+        ])
+        
+        let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
+        self.container = try! ModelContainer(for: schema, configurations: [configuration])
     }
 
     var body: some Scene {
         WindowGroup {
-            AuthView()
+            if let user = Auth.auth().currentUser {
+                LoadingAppView(user: user)
+            } else {
+                AuthView()
+            }
         }
-        .modelContainer(for: [FamilyMember.self, CrossBloodLineConnection.self])
+        .modelContainer(container)
     }
 }

@@ -9,13 +9,11 @@ import SwiftUI
 
 struct ConnectionDrawerModifier: ViewModifier {
 
-    typealias Key = CollectDict<FamilyMember.ID, Anchor<CGPoint>>
-
-    @Binding var connections: [CrossBloodLineConnection]
+    @Binding var connections: [CrossBloodlineConnection]
 
     func body(content: Content) -> some View {
         content
-            .backgroundPreferenceValue(Key.self) { centers in
+            .backgroundPreferenceValue(AnchorKey.self) { centers in
                 GeometryReader { proxy in
                     ZStack {
                         ForEach(Array(connections.enumerated()), id: \.element.fromChild) { index, connection in
@@ -40,7 +38,7 @@ struct ConnectionDrawerModifier: ViewModifier {
 }
 
 extension View {
-    func drawConnections(for connections: Binding<[CrossBloodLineConnection]>) -> some View {
+    func drawConnections(for connections: Binding<[CrossBloodlineConnection]>) -> some View {
         self.modifier(ConnectionDrawerModifier(connections: connections))
     }
 }

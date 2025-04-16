@@ -17,6 +17,7 @@ struct FamilyMemberView: View {
 
     var body: some View {
         VStack {
+            // TODO: I think this HStack can be deleted
             HStack {
                 VStack {
                     Text(member.fullName)
@@ -37,58 +38,79 @@ struct FamilyMemberView: View {
             HStack(spacing: 12) {
                 if !member.isMarriedIntoFamily {
                     // Add Child Button
-                    Button(action: {
-                        let newChild = FamilyMember(lastName: lastNameForChild, parent: member)
-                        member.children.append(newChild)
-                    }) {
-                        Image(systemName: "arrowshape.down.fill")
-                    }
+                    addChildButton()
                     if member.spouse == nil  {
-                        // Add Spouse Button
-                        Button(action: {
-                            let newSpouse = FamilyMember(sex: member.sex?.opposite ?? nil, isMarriedIntoFamily: true)
-                            
-                            member.spouse = newSpouse
-                        }) {
-                            Image(systemName: "heart.circle")
-                        }
+                        addSpouseButton()
                     }
                 }
                 if member.isTopOfBloodline || member.isMarriedIntoFamily && !member.connectsTwoBloodlines {
                     // Add Parent Button
-                    Button(action: {
-                        let newParent = FamilyMember(firstName: "Parent", lastName: member.lastName, isTopOfBloodline: true)
-                        member.parent = newParent
-
-                        if member.isTopOfBloodline {
-                            newParent.children = [member]
-                            member.isTopOfBloodline = false
-                            newRoot?(newParent)
-                        } else {
-                            newParent.connectsTwoBloodlines = true
-                            newParent.bloodlineConnectionChild = member
-                            member.connectsTwoBloodlines = true
-
-                            newBloodline(member, newParent)
-                        }
-                    }) {
-                        Image(systemName: "arrowshape.up.fill")
-                    }
+                    addParentButton()
                 }
-                Button(role: .destructive) {
-                    let newTopOfBloodline = member.removeReferences()
-                    if let newTopOfBloodline {
-                        newRoot?(newTopOfBloodline)
-                    }
-                    onDelete(member, member.isMarriedIntoFamily)
-                } label: {
-                    Image(systemName: "trash")
-                }
+                deleteButton()
             }
         }
     }
 
-    
+    // MARK: - ViewBuilders
+
+    @ViewBuilder
+    private func deleteButton() -> some View {
+        Button(role: .destructive) {
+            let newTopOfBloodline = member.removeReferences()
+            if let newTopOfBloodline {
+                newRoot?(newTopOfBloodline)
+            }
+            onDelete(member, member.isMarriedIntoFamily)
+        } label: {
+            Image(systemName: "trash")
+        }
+    }
+
+    @ViewBuilder
+    private func addChildButton() -> some View {
+        Button(action: {
+            let newChild = FamilyMember(lastName: lastNameForChild, parent: member)
+            member.children.append(newChild)
+        }) {
+            Image(systemName: "arrowshape.down.fill")
+        }
+    }
+
+    @ViewBuilder
+    private func addSpouseButton() -> some View {
+        Button(action: {
+            let newSpouse = FamilyMember(sex: member.sex?.opposite ?? nil, isMarriedIntoFamily: true)
+            member.spouse = newSpouse
+        }) {
+            Image(systemName: "heart.circle")
+        }
+    }
+
+    @ViewBuilder
+    private func addParentButton() -> some View {
+        Button(action: {
+            let newParent = FamilyMember(firstName: "Parent", lastName: member.lastName, isTopOfBloodline: true)
+            member.parent = newParent
+
+            if member.isTopOfBloodline {
+                newParent.children = [member]
+                member.isTopOfBloodline = false
+                newRoot?(newParent)
+            } else {
+                newParent.connectsTwoBloodlines = true
+                newParent.bloodlineConnectionChild = member
+                member.connectsTwoBloodlines = true
+
+                newBloodline(member, newParent)
+            }
+        }) {
+            Image(systemName: "arrowshape.up.fill")
+        }
+    }
+
+    // MARK: - Helpers
+
     private var lastNameForChild: String? {
         if member.sex == .male {
             member.lastName

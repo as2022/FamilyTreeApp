@@ -1,17 +1,14 @@
 //
-//  Diagrams.swift
-//  DiagramsSample
+//  Diagram.swift
+//  BinaryTree
 //
-//  Created by Chris Eidhof on 16.12.19.
-//  Copyright © 2019 objc.io. All rights reserved.
+//  Created by Alex Smithson on 3/28/25.
 //
 
 import SwiftUI
 
 /// A simple Diagram. It's not very performant yet, but works great for smallish roots.
 struct Diagram<V: View>: View {
-
-    typealias Key = CollectDict<FamilyMember.ID, Anchor<CGPoint>>
 
     @Binding var root: FamilyMember
     var node: (Binding<FamilyMember>) -> V
@@ -20,7 +17,7 @@ struct Diagram<V: View>: View {
         VStack(alignment: .center, spacing: 20) {
             HStack(alignment: .top, spacing: 20) {
                 node($root)
-                    .anchorPreference(key: Key.self, value: .center, transform: {
+                    .anchorPreference(key: AnchorKey.self, value: .center, transform: {
                         [self.root.id: $0]
                     })
                 if let spouse = root.spouse {
@@ -36,7 +33,7 @@ struct Diagram<V: View>: View {
                 }
             }
         }
-        .backgroundPreferenceValue(Key.self) { centers in
+        .backgroundPreferenceValue(AnchorKey.self) { centers in
             GeometryReader { proxy in
                 ForEach(self.root.children, id: \.id) { child in
                     if let from = centers[self.root.id], let to = centers[child.id] {
