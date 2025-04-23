@@ -1,6 +1,6 @@
 //
 //  FamilyMember.swift
-//  BinaryTree
+//  FamilyTree
 //
 //  Created by Alex Smithson on 3/15/25.
 //
@@ -88,6 +88,7 @@ class FamilyMember: Identifiable {
 
 extension FamilyMember {
 
+    /// The number of descendants from the family member and their spouses, including self and spouse.
     var familySize: Int {
         let childrenCount = children.reduce(0) { $0 + $1.familySize }
         let spouseCount = spouse != nil ? 1 : 0
@@ -110,6 +111,7 @@ extension FamilyMember {
     func delete(_ member: FamilyMember) {
         guard children.contains(where: { $0 == member }) else {
             self.children.removeAll(where: { $0 == member })
+            print("Removing: \(member.fullName)")
             return
         }
 
@@ -140,14 +142,5 @@ extension FamilyMember {
             }
         }
         return nil
-    }
-    
-    func updateDetails(using other: FamilyMember) {
-        firstName = other.firstName
-        middleName = other.middleName
-        lastName = other.lastName
-        sex = other.sex
-        birthDate = other.birthDate
-        birthPlace = other.birthPlace
     }
 }

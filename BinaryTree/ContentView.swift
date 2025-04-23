@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  BinaryTree
+//  FamilyTree
 //
 //  Created by Alex Smithson on 3/15/25.
 //

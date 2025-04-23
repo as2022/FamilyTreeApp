@@ -17,34 +17,29 @@ struct FamilyMemberView: View {
 
     var body: some View {
         VStack {
-            // TODO: I think this HStack can be deleted
-            HStack {
-                VStack {
-                    Text(member.fullName)
-                        .font(.headline)
-                        .foregroundColor(genderColor)
-                    Text("Born: \(formattedDate(member.birthDate))")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                }
-                .padding()
-                .background(
-                    Capsule()
-                        .fill(ColorTheme.lightGreen)
-                        .stroke(outlineColor, lineWidth: 10)
-                )
+            VStack {
+                Text(member.fullName)
+                    .font(.headline)
+                    .foregroundColor(genderColor)
+                Text("Born: \(formattedDate(member.birthDate))")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
             }
+            .padding()
+            .background(
+                Capsule()
+                    .fill(ColorTheme.lightGreen)
+                    .stroke(outlineColor, lineWidth: 10)
+            )
 
             HStack(spacing: 12) {
                 if !member.isMarriedIntoFamily {
-                    // Add Child Button
                     addChildButton()
                     if member.spouse == nil  {
                         addSpouseButton()
                     }
                 }
                 if member.isTopOfBloodline || member.isMarriedIntoFamily && !member.connectsTwoBloodlines {
-                    // Add Parent Button
                     addParentButton()
                 }
                 deleteButton()

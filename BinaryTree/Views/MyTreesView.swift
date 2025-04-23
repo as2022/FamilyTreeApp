@@ -1,7 +1,7 @@
 //
 //  MyTreesView.swift
-//  BinaryTree
-//
+//  FamilyTree
+//ØAuth
 //  Created by Alex Smithson on 3/15/25.
 //
 
@@ -132,7 +132,16 @@ struct MyTreesView: View {
         if member.isTopOfBloodline, member.familySize == 1, let index = trees.firstIndex(of: member) {
             trees.remove(at: index)
         }
+        print("\n\nBefore deletion:\n")
+        print(allMembers.count)
         modelContext.delete(member)
+        do {
+            try modelContext.save()
+        } catch {
+            print("❌ Failed to save context after deletion: \(error)")
+        }
+//        print("\n\nAfter deletion:\n")
+//        print(allMembers.map(\.fullName).joined(separator: "\n"))
     }
 
     private func provideOutlineColor(for person: FamilyMember) -> Color {

@@ -1,12 +1,13 @@
 //
-//  Tree.swift
-//  BinaryTree
+//  AnchorKey.swift
+//  FamilyTree
 //
 //  Created by Alex Smithson on 3/15/25.
 //
 
 import SwiftUICore
 
+/// Key for anchoring a FamilyMemberView at a specified point
 struct AnchorKey: PreferenceKey {
 
     static var defaultValue: [FamilyMember.ID : Anchor<CGPoint>] { [:] }

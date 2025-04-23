@@ -1,6 +1,6 @@
 //
 //  FamilyMemberDTO.swift
-//  BinaryTree
+//  FamilyTree
 //
 //  Created by Alex Smithson on 4/13/25.
 //

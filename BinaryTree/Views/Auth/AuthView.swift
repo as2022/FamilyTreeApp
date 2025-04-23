@@ -1,6 +1,6 @@
 //
 //  AuthView.swift
-//  BinaryTree
+//  FamilyTree
 //
 //  Created by Alex Smithson on 4/13/25.
 //
@@ -9,12 +9,12 @@ import SwiftUI
 import SwiftData
 
 struct AuthView: View {
-
+    
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) var colorScheme
-
+    
     @StateObject private var viewModel = AuthViewModel()
-
+    
     @State private var email = ""
     @State private var password = ""
     @State private var isCreatingAccount = false
@@ -25,6 +25,7 @@ struct AuthView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 150, height: 150)
+                .clipShape(RoundedRectangle(cornerRadius: 25))
                 .padding(.bottom)
             TextField("Email", text: $email)
                 .textFieldStyle(.roundedBorder)
@@ -33,7 +34,6 @@ struct AuthView: View {
             SecureField("Password", text: $password)
                 .textFieldStyle(.roundedBorder)
 
-            // 🔴 Error message (if any)
             if let error = viewModel.errorMessage {
                 Text(error)
                     .foregroundColor(.red)
@@ -57,6 +57,7 @@ struct AuthView: View {
             .font(.footnote)
             .padding()
         }
+        .padding(24)
         .fullScreenCover(item: $viewModel.user) { user in
             LoadingAppView(user: user)
         }

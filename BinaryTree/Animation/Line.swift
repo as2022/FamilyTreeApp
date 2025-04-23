@@ -1,13 +1,13 @@
 //
 //  Line.swift
-//  BinaryTree
+//  FamilyTree
 //
 //  Created by Alex Smithson on 3/15/25.
 //
 
 import SwiftUI
 
-/// Draws an edge from `from` to `to`
+/// Draws a line  from `from` to `to`
 struct Line: Shape {
     var from: CGPoint
     var to: CGPoint

@@ -1,6 +1,6 @@
 //
 //  ConnectionColor.swift
-//  BinaryTree
+//  FamilyTree
 //
 //  Created by Alex Smithson on 3/28/25.
 //

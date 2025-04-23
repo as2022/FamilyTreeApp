@@ -12,7 +12,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A2A834A32D866804003465DF /* BinaryTree.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BinaryTree.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2A834A32D866804003465DF /* FamilyTree.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FamilyTree.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -47,7 +47,7 @@
 		A2A834A42D866804003465DF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A2A834A32D866804003465DF /* BinaryTree.app */,
+				A2A834A32D866804003465DF /* FamilyTree.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -55,9 +55,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A2A834A22D866804003465DF /* BinaryTree */ = {
+		A2A834A22D866804003465DF /* FamilyTree */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A2A834B12D866804003465DF /* Build configuration list for PBXNativeTarget "BinaryTree" */;
+			buildConfigurationList = A2A834B12D866804003465DF /* Build configuration list for PBXNativeTarget "FamilyTree" */;
 			buildPhases = (
 				A2A8349F2D866804003465DF /* Sources */,
 				A2A834A02D866804003465DF /* Frameworks */,
@@ -70,13 +70,13 @@
 			fileSystemSynchronizedGroups = (
 				A2A834CA2D866EAF003465DF /* BinaryTree */,
 			);
-			name = BinaryTree;
+			name = FamilyTree;
 			packageProductDependencies = (
 				A2DD699F2DAB503A000495CD /* FirebaseAuth */,
 				A2DD69A12DAB503A000495CD /* FirebaseFirestore */,
 			);
 			productName = BinaryTree;
-			productReference = A2A834A32D866804003465DF /* BinaryTree.app */;
+			productReference = A2A834A32D866804003465DF /* FamilyTree.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -94,7 +94,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A2A8349E2D866804003465DF /* Build configuration list for PBXProject "BinaryTree" */;
+			buildConfigurationList = A2A8349E2D866804003465DF /* Build configuration list for PBXProject "FamilyTree" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -111,7 +111,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A2A834A22D866804003465DF /* BinaryTree */,
+				A2A834A22D866804003465DF /* FamilyTree */,
 			);
 		};
 /* End PBXProject section */
@@ -319,7 +319,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A2A8349E2D866804003465DF /* Build configuration list for PBXProject "BinaryTree" */ = {
+		A2A8349E2D866804003465DF /* Build configuration list for PBXProject "FamilyTree" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A2A834AF2D866804003465DF /* Debug */,
@@ -328,7 +328,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A2A834B12D866804003465DF /* Build configuration list for PBXNativeTarget "BinaryTree" */ = {
+		A2A834B12D866804003465DF /* Build configuration list for PBXNativeTarget "FamilyTree" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A2A834B22D866804003465DF /* Debug */,

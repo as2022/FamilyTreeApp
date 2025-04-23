@@ -1,6 +1,6 @@
 //
 //  LoadingAppViewModel.swift
-//  BinaryTree
+//  FamilyTree
 //
 //  Created by Alex Smithson on 4/16/25.
 //
@@ -16,9 +16,6 @@ class LoadingAppViewModel: ObservableObject {
     var user: User
     @Published var appDataLoaded = false
     @Published var proceedToApp = false
-
-    // MARK: Considering making new type called tree-graph-loader-view
-    // Here are the types for it:
 
     var parentsInConnections: [FamilyMember] = []
     var chilrenInConnections: [FamilyMember] = []
@@ -68,6 +65,8 @@ class LoadingAppViewModel: ObservableObject {
                 decodedFamilyMembers.append(member)
             }
         }
+
+        // Convert to Client Models
 
         decodedFamilyMembers
             .filter { $0.isTopOfBloodline }

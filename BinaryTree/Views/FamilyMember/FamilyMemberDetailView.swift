@@ -57,3 +57,15 @@ struct FamilyMemberDetailView: View {
         Binding(get: { string.wrappedValue ?? "" }, set: { string.wrappedValue = $0.isEmpty ? nil : $0 })
     }
 }
+
+extension FamilyMember {
+    func updateDetails(using other: FamilyMember) {
+        firstName = other.firstName
+        middleName = other.middleName
+        lastName = other.lastName
+        suffix = other.suffix
+        sex = other.sex
+        birthDate = other.birthDate
+        birthPlace = other.birthPlace
+    }
+}

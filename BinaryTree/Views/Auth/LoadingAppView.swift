@@ -1,6 +1,6 @@
 //
 //  LoadingAppView.swift
-//  BinaryTree
+//  FamilyTree
 //
 //  Created by Alex Smithson on 4/16/25.
 //

@@ -1,6 +1,6 @@
 //
 //  ColorTheme.swift
-//  BinaryTree
+//  FamilyTree
 //
 //  Created by Alex Smithson on 4/4/25.
 //

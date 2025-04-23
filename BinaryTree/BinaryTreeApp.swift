@@ -1,6 +1,6 @@
 //
-//  BinaryTreeApp.swift
-//  BinaryTree
+//  FamilyTreeApp.swift
+//  FamilyTree
 //
 //  Created by Alex Smithson on 3/15/25.
 //
