@@ -1,4 +1,4 @@
-# 🌳 FamilyTree – A SwiftUI Cloud-Powered Family Tree App
+# 🌳 FamilyTree – A SwiftUI Cloud-Based Family Tree App
 
 FamilyTree is a SwiftUI application that allows users to visually build, explore, and manage their family history — complete with parent, child, and spouse relationships — stored securely in the cloud with Firebase.
 
